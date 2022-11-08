@@ -8,7 +8,7 @@
       <label>
         Upload a file here (of file type .jpeg, .jpg, or .gif):
 
-        <input type="file" name="users_image" accept="image/png, image/jpeg, image/gif" />
+        <input type="file" name="users_image" accept="image/png, image/jpeg, image/gif" required />
       </label>
     </p>
     <p>
@@ -35,6 +35,7 @@
   <p>Here is your filtered image:</p>
   <p>
     <!-- TODO: Display the filtered image using the img tag and the URL passed in -->
+    <img src="{{image_url}}" alt="" />
   </p>
 </section>
 {% endif %} {% endblock %}

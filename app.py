@@ -164,15 +164,17 @@ def image_filter():
         # TODO: Get the user's chosen filter type (whichever one they chose in the form) and save
         # as a variable
         # HINT: remember that we're working with a POST route here so which requests function would you use?
-        filter_type = ""
+        filter_type = request.form.get('filter_type')
 
         # Get the image file submitted by the user
         image = request.files.get("users_image")
 
         # TODO: call `save_image()` on the image & the user's chosen filter type, save the returned
         # value as the new file path
+        file_path = save_image(image, filter_type)
 
         # TODO: Call `apply_filter()` on the file path & filter type
+        apply_filter(file_path,filter_type)
 
         image_url = f"./static/images/{image.filename}"
 
@@ -182,7 +184,8 @@ def image_filter():
             # TODO: Add context variables here for:
             # - The full list of filter types
             # - The image URL
-            'filter_types': filter_types
+            'filter_types': filter_types,
+            'image_url': image_url
         }
 
         return render_template("image_filter.html", **context)
@@ -210,9 +213,9 @@ Set up dotenv, create a .env file and define a variable
 API_KEY with a value that is the api key for your account. """
 
 API_KEY = os.getenv("API_KEY")
-print(API_KEY)
+print('API KEY ******* ', API_KEY)
 
-TENOR_URL = "https://api.tenor.com/v1/search"
+TENOR_URL = "https://tenor.googleapis.com/v2/search"
 pp = PrettyPrinter(indent=4)
 
 
@@ -223,17 +226,25 @@ def gif_search():
         # TODO: Get the search query & number of GIFs requested by the user, store each as a
         # variable
 
+        q = request.form.get('search_query')
+        limit = request.form.get('quantity')
+
         response = requests.get(
             TENOR_URL,
             {
                 # TODO: Add in key-value pairs for:
                 # - 'q': the search query
+                'q': q,
                 # - 'key': the API key (defined above)
+                'key': API_KEY,
                 # - 'limit': the number of GIFs requested
+                'limit': limit
             },
         )
 
         gifs = json.loads(response.content).get("results")
+
+        
 
         context = {"gifs": gifs}
 
@@ -243,6 +254,8 @@ def gif_search():
         # list of media objects. Get the gif and use it's
         # url in your template to display the gif.
         # pp.pprint(gifs)
+
+
 
         return render_template("gif_search.html", **context)
     else:
